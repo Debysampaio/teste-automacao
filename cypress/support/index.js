@@ -1,3 +1,4 @@
 // support/index.js
 
-import './commands';
+import '../cypress/cypress/support/commands';
+
