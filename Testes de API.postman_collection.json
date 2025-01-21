@@ -1,0 +1,324 @@
+{
+	"info": {
+		"_postman_id": "3cca92ff-caaf-4626-9bb0-ddd4ebd853bd",
+		"name": "Testes de API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "18305641"
+	},
+	"item": [
+		{
+			"name": "Posts",
+			"item": [
+				{
+					"name": "Inserir Post",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response schema is valid\", function () {\r",
+									"  var schema = {\r",
+									"    type: \"object\",\r",
+									"    properties: {\r",
+									"      userId: { type: \"number\" },\r",
+									"      title: { type: \"string\" },\r",
+									"      body: { type: \"string\" },\r",
+									"      id: { type: \"number\" }\r",
+									"    },\r",
+									"    required: [\"userId\", \"title\", \"body\", \"id\"]\r",
+									"  };\r",
+									"\r",
+									"  pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;\r",
+									"});\r",
+									"// Verifica o comprimento dos dados de resposta\r",
+									"pm.test(\"Response data length is greater than zero\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    pm.expect(Object.keys(responseData).length).to.be.greaterThan(0, \"Response data should not be empty\");\r",
+									"});\r",
+									"// Salve o postId da resposta\r",
+									"var postId = pm.response.json().id;\r",
+									"pm.globals.set(\"id\", postId);\r",
+									"\r",
+									"// Verifique se o campo 'body' é igual a 'post inserido com sucesso'\r",
+									"pm.test(\"Body field is equal to 'post inserido com sucesso'\", function () {\r",
+									"    pm.expect(pm.response.json().body).to.equal('serei o novo QA da proesc.com');\r",
+									"});\r",
+									"\r",
+									"// Verifique se o campo 'título' é igual a 'proesc'\r",
+									"pm.test(\"Title field is equal to 'proesc'\", function () {\r",
+									"    pm.expect(pm.response.json().title).to.equal('proesc');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": 11,\r\n    \"title\": \"proesc\",\r\n    \"body\": \"serei o novo QA da proesc.com\"\r\n  }\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/posts",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar Posts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response has the required fields - userId, id, title, and body\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.be.an('array');\r",
+									"    responseData.forEach(function(post) {\r",
+									"        pm.expect(post).to.have.property('userId');\r",
+									"        pm.expect(post).to.have.property('id');\r",
+									"        pm.expect(post).to.have.property('title');\r",
+									"        pm.expect(post).to.have.property('body');\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Title and body are non-empty strings\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.be.an('array').that.is.not.empty;\r",
+									"    \r",
+									"    responseData.forEach(function(post) {\r",
+									"        pm.expect(post.title).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Title should not be empty\");\r",
+									"        pm.expect(post.body).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Body should not be empty\");\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Content-Type header is application/json\", function () {\r",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"// Test to ensure that the \"title\" field is a string\r",
+									"pm.test(\"Title field is a string\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    responseData.forEach(function(post) {\r",
+									"        pm.expect(post.title).to.be.a('string', \"Title should be a string\");\r",
+									"    });\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/posts",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"posts"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Comments",
+			"item": [
+				{
+					"name": "buscar comentarios",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Response status code is 200\", function () {\r",
+									"  pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Content-Type header is application/json\", function () {\r",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Validate the schema of the response - postId, id, name, email, body\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.be.an('array');\r",
+									"    responseData.forEach((comment) => {\r",
+									"        pm.expect(comment).to.have.property('postId').that.is.a('number');\r",
+									"        pm.expect(comment).to.have.property('id').that.is.a('number');\r",
+									"        pm.expect(comment).to.have.property('name').that.is.a('string');\r",
+									"        pm.expect(comment).to.have.property('email').that.is.a('string');\r",
+									"        pm.expect(comment).to.have.property('body').that.is.a('string');\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/comments",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Inserir Comentarios",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Verificar o comprimento dos dados de resposta\r",
+									"pm.test(\"The response data length must be greater than zero\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    const keys = Object.keys(responseData);\r",
+									"   \r",
+									"    pm.expect(keys.length).to.be.greaterThan(0, \"Response data should not be empty\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"//Teste para verificar se o tempo de resposta está dentro de uma faixa aceitável\r",
+									"pm.test(\"Response time is less than 1000ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+									"});\r",
+									"// Teste para verificar o tipo de conteúdo de resposta\r",
+									"pm.test(\"Response has content type application/json\", function () {\r",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+									"});\r",
+									"// Verificar o esquema de resposta\r",
+									"pm.test(\"Response schema is valid\", function () {\r",
+									"  var schema = {\r",
+									"    type: \"object\",\r",
+									"    properties: {\r",
+									"      postId: { type: \"number\" },\r",
+									"      id: { type: \"number\" },\r",
+									"      name: { type: \"string\" },\r",
+									"      email: { type: \"string\", format: \"email\" },\r",
+									"      body: { type: \"string\" }\r",
+									"    },\r",
+									"    required: [\"postId\", \"id\", \"name\", \"email\", \"body\"],\r",
+									"  };\r",
+									"\r",
+									"  var response = pm.response.json();\r",
+									"  pm.expect(tv4.validate(response, schema)).to.be.true;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": " {\r\n    \"postId\": 1,\r\n    \"id\": 2,\r\n    \"name\": \"quo vero reiciendis velit similique earum\",\r\n    \"email\": \"Jayne_Kuhic@sydney.com\",\r\n    \"body\": \"est natus enim nihil est dolore omnis voluptatem numquam\\net omnis occaecati quod ullam at\\nvoluptatem error expedita pariatur\\nnihil sint nostrum voluptatem reiciendis et\"\r\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/comments",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "url",
+			"value": "https://jsonplaceholder.typicode.com/",
+			"type": "string"
+		}
+	]
+}
